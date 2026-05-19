@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Package, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { Search, Package, CheckCircle, XCircle, Clock, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -35,6 +35,14 @@ const colorLabels: Record<ExteriorColor, string> = {
   'lunar-white': 'Lunar White',
   'midnight-black': 'Midnight Black',
 };
+
+const statusBadgeClass: Record<Order['status'], string> = {
+  APROVADO: 'bg-green-100 text-green-700',
+  REPROVADO: 'bg-red-100 text-red-700',
+  EM_ANALISE: 'bg-amber-100 text-amber-700',
+};
+
+const formatOrderStatus = (status: Order['status']) => status.replace(/_/g, ' ');
 
 const OrderLookup = () => {
   const [orderId, setOrderId] = useState('');
@@ -147,17 +155,19 @@ const OrderLookup = () => {
                 <div
                   role="status"
                   className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
-                    searchedOrder.status === 'APROVADO'
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-red-100 text-red-700'
+                    statusBadgeClass[searchedOrder.status]
                   }`}
                 >
-                  {searchedOrder.status === 'APROVADO' ? (
+                  {searchedOrder.status === 'APROVADO' && (
                     <CheckCircle className="w-4 h-4" />
-                  ) : (
+                  )}
+                  {searchedOrder.status === 'REPROVADO' && (
                     <XCircle className="w-4 h-4" />
                   )}
-                  {searchedOrder.status}
+                  {searchedOrder.status === 'EM_ANALISE' && (
+                    <Clock className="w-4 h-4" />
+                  )}
+                  {formatOrderStatus(searchedOrder.status)}
                 </div>
               </div>
             </CardHeader>

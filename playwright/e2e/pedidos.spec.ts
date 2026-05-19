@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
 import { generateOrderCode } from '../support/helpers';
-import { stat } from 'fs';
 
 //AAA - Arrange, Act, Assert
 
@@ -79,9 +78,9 @@ test.describe('Consultar Pedido', () => {
       await expect(containerPedido).toContainText(order,{timeout: 10000});
       await expect(page.getByText('EM ANALISE')).toBeVisible({ timeout: 5000 });
       
-      await expect(statusBadge).toHaveClass(/bg-yellow-100/);
-      await expect(statusBadge).toHaveClass(/text-yellow-700/);
-      await expect(statusIcon).toHaveClass(/lucide-circle-alert/);
+      await expect(statusBadge).toHaveClass(/bg-amber-100/);
+      await expect(statusBadge).toHaveClass(/text-amber-700/);
+      await expect(statusIcon).toHaveClass(/lucide-clock/);
     });
 
     test('deve consultar um pedido aprovado - snapshot', async ({ page }) => {
@@ -98,6 +97,8 @@ test.describe('Consultar Pedido', () => {
         },
         payment: 'À Vista'
       };
+      const statusBadge = page.getByRole('status').filter({ hasText: 'APROVADO'});
+      const statusIcon = statusBadge.locator('svg');
 
       //Act
       await page.getByRole('textbox', { name: 'Número do Pedido' }).fill(order.number);
@@ -133,6 +134,10 @@ test.describe('Consultar Pedido', () => {
         - paragraph: ${order.payment}
         - paragraph: /R\\$ \\d+\\.\\d+,\\d+/
       `);
+
+      await expect(statusBadge).toHaveClass(/bg-green-100/);
+      await expect(statusBadge).toHaveClass(/text-green-700/);
+      await expect(statusIcon).toHaveClass(/lucide-circle-check-big/);
     });
 
     test('deve consultar um pedido reprovado - snapshot', async ({ page }) => {
@@ -149,6 +154,9 @@ test.describe('Consultar Pedido', () => {
         },
         payment: 'À Vista'
       };
+      const statusBadge = page.getByRole('status').filter({ hasText: 'REPROVADO'});
+      const statusIcon = statusBadge.locator('svg');
+
 
       //Act
       await page.getByRole('textbox', { name: 'Número do Pedido' }).fill(order.number);
@@ -184,6 +192,10 @@ test.describe('Consultar Pedido', () => {
         - paragraph: ${order.payment}
         - paragraph: /R\\$ \\d+\\.\\d+,\\d+/
       `);
+
+      await expect(statusBadge).toHaveClass(/bg-red-100/);
+      await expect(statusBadge).toHaveClass(/text-red-700/);
+      await expect(statusIcon).toHaveClass(/lucide-circle-x/);
     });
 
     test('deve consultar um pedido em analise - snapshot', async ({ page }) => {
@@ -200,6 +212,8 @@ test.describe('Consultar Pedido', () => {
         },
         payment: 'À Vista'
       };
+      const statusBadge = page.getByRole('status').filter({ hasText: 'EM ANALISE'});
+      const statusIcon = statusBadge.locator('svg');
 
       //Act
       await page.getByRole('textbox', { name: 'Número do Pedido' }).fill(order.number);
@@ -235,6 +249,10 @@ test.describe('Consultar Pedido', () => {
         - paragraph: ${order.payment}
         - paragraph: /R\\$ \\d+\\.\\d+,\\d+/
       `);
+
+      await expect(statusBadge).toHaveClass(/bg-amber-100/);
+      await expect(statusBadge).toHaveClass(/text-amber-700/);
+      await expect(statusIcon).toHaveClass(/lucide-clock/);
     });
 
     test('deve exibir mensagem quando o pedido não for encontrado - snapshot', async ({ page }) => {
